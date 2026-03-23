@@ -39,7 +39,7 @@ export async function processPayment(orderId) {
       return { message: "Payment successful", status: "SUCCESS" };
     }
 
-    // FAILURE → rollback stock
+    // Failed- rollback stock
     for (const item of order.items) {
       await tx.product.update({
         where: { id: item.productId },
