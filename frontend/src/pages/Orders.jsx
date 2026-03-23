@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
 
-// Small helper to color the status badge based on order status
 function StatusBadge({ status }) {
   const styles = {
     pending:
@@ -65,7 +64,7 @@ export default function Orders() {
               p-5 transition-colors duration-200
             "
           >
-            {/* Order Header */}
+            {/* Ord Header */}
             <div className="flex justify-between items-center mb-4">
               <div>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mb-0.5 font-medium uppercase tracking-wide">
@@ -87,7 +86,7 @@ export default function Orders() {
             {/* Divider */}
             <hr className="border-gray-100 dark:border-gray-700 mb-4" />
 
-            {/* Items */}
+            {/* Itms */}
             <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">
               Items
             </p>

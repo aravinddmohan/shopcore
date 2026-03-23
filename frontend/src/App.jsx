@@ -38,7 +38,7 @@ function Navbar() {
             Orders
           </Link>
 
-          {/* Cart as CTA */}
+          {/* Cart */}
           <Link
             to="/cart"
             className="bg-yellow-400 hover:bg-yellow-500 text-black px-4 py-2 rounded-md font-semibold shadow-sm transition"
@@ -46,7 +46,7 @@ function Navbar() {
             Cart
           </Link>
 
-          {/* Theme Toggle */}
+          {/* Toggletheme */}
           <button
             onClick={toggleTheme}
             className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded"

@@ -68,7 +68,7 @@ export default function Cart() {
                     ₹{item.price} / unit
                   </p>
 
-                  {/* Quantity Controls */}
+                  {/* Quanity Controls */}
                   <div className="flex items-center gap-3 mt-3">
                     <button
                       onClick={() => updateCart(item.id, item.quantity - 1)}
@@ -126,7 +126,7 @@ export default function Cart() {
             ))}
           </div>
 
-          {/* Summary Panel */}
+          {/* Sumary Panel */}
           <div
             className="
               bg-white dark:bg-gray-800
@@ -170,7 +170,7 @@ export default function Cart() {
                 shadow-sm transition-colors duration-200
               "
             >
-              Proceed to Checkout 💳
+              Proceed to Checkout 
             </button>
           </div>
         </div>
