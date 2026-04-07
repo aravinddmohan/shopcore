@@ -1,4 +1,5 @@
 import prisma from "../../config/db.js";
+import redisClient from "../../config/redis.js";
 
 export async function addToCart(userId, productId, quantity = 1) {
   let cart = await prisma.cart.findFirst({
@@ -21,6 +22,8 @@ export async function addToCart(userId, productId, quantity = 1) {
   });
 
   if (existingItem) {
+    await redisClient.del(`cart:${userId}`);
+
     return await prisma.cartItem.update({
       where: { id: existingItem.id },
       data: {
@@ -28,6 +31,8 @@ export async function addToCart(userId, productId, quantity = 1) {
       },
     });
   }
+
+  await redisClient.del(`cart:${userId}`);
 
   return await prisma.cartItem.create({
     data: {
@@ -37,22 +42,34 @@ export async function addToCart(userId, productId, quantity = 1) {
     },
   });
 }
-
 export async function getCart(userId) {
+  const cacheKey = `cart:${userId}`;
+
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      console.log("Cache hit");
+      return JSON.parse(cached);
+    }
+  } catch (err) {
+    console.log("Redis failed, fallback to DB");
+  }
+
+  console.log("DB hit");
+
   const cart = await prisma.cart.findFirst({
     where: { userId },
     include: {
       items: {
-        include: {
-          product: true, // JOIN
-        },
+        include: { product: true },
+        orderBy: { createdAt: "asc" },
       },
     },
   });
 
   if (!cart) return null;
 
-  return {
+  const formatted = {
     userId: cart.userId,
     items: cart.items.map((item) => ({
       id: item.id,
@@ -62,24 +79,55 @@ export async function getCart(userId) {
       quantity: item.quantity,
     })),
   };
+
+  try {
+    await redisClient.set(cacheKey, JSON.stringify(formatted), {
+      EX: 60,
+    });
+  } catch (err) {
+    console.log("Redis set failed");
+  }
+
+  return formatted;
 }
 
 export async function updateCartItem(cartItemId, quantity) {
+  const item = await prisma.cartItem.findUnique({
+    where: { id: cartItemId },
+    include: { cart: true },
+  });
+
+  if (!item) return null;
+
   if (quantity <= 0) {
-    // delete instead
-    return await prisma.cartItem.delete({
+    await prisma.cartItem.delete({
       where: { id: cartItemId },
+    });
+  } else {
+    await prisma.cartItem.update({
+      where: { id: cartItemId },
+      data: { quantity },
     });
   }
 
-  return await prisma.cartItem.update({
-    where: { id: cartItemId },
-    data: { quantity },
-  });
+  await redisClient.del(`cart:${item.cart.userId}`);
+
+  return { success: true };
 }
 
 export async function removeCartItem(cartItemId) {
-  return await prisma.cartItem.delete({
+  const item = await prisma.cartItem.findUnique({
+    where: { id: cartItemId },
+    include: { cart: true },
+  });
+
+  if (!item) return null;
+
+  await prisma.cartItem.delete({
     where: { id: cartItemId },
   });
+
+  await redisClient.del(`cart:${item.cart.userId}`);
+
+  return { success: true };
 }

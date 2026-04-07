@@ -50,7 +50,7 @@ export default function Cart() {
           <div className="md:col-span-2 space-y-4">
             {cart.map((item) => (
               <div
-                key={item.productId}
+                key={item.Id}
                 className="
                   bg-white dark:bg-gray-800
                   border border-gray-100 dark:border-gray-700
@@ -170,7 +170,7 @@ export default function Cart() {
                 shadow-sm transition-colors duration-200
               "
             >
-              Proceed to Checkout 
+              Proceed to Checkout
             </button>
           </div>
         </div>
