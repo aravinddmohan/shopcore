@@ -50,7 +50,7 @@ export default function Cart() {
           <div className="md:col-span-2 space-y-4">
             {cart.map((item) => (
               <div
-                key={item.Id}
+                key={item.id}
                 className="
                   bg-white dark:bg-gray-800
                   border border-gray-100 dark:border-gray-700

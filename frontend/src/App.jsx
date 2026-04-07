@@ -10,6 +10,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import { useTheme } from "./context/ThemeContext";
+import { Toaster } from "react-hot-toast";
 
 function Navbar() {
   const location = useLocation();
@@ -62,6 +63,7 @@ function Navbar() {
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" />
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 dark:text-white">
         <Navbar />
 

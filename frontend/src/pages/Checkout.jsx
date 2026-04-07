@@ -1,29 +1,33 @@
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../services/api";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Checkout() {
   const { orderId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
   const handlePayment = async () => {
     setLoading(true);
 
+    const promise = API.post("/payment/pay", {
+      orderId: Number(orderId),
+    });
+
+    toast.promise(promise, {
+      loading: "Processing payment...",
+      success: "Payment successful 💸",
+      error: "Payment failed ❌",
+    });
+
     try {
-      const res = await API.post("/payment/pay", {
-        orderId: Number(orderId),
-      });
+      const res = await promise;
 
       if (res.data.status === "SUCCESS") {
-        alert("Payment Successful 😈");
         navigate("/orders");
-      } else {
-        alert("Payment Failed");
       }
     } catch (err) {
       console.error(err);
-      alert("Payment error");
     } finally {
       setLoading(false);
     }

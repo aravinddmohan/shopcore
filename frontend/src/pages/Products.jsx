@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import API from "../services/api";
 import { useCart } from "../context/CartContext";
 
@@ -62,7 +63,14 @@ export default function Products() {
 
             {/* Button */}
             <button
-              onClick={() => addToCart(p.id)}
+              onClick={async () => {
+                try {
+                  await addToCart(p.id);
+                  toast.success("Added to cart 🛒");
+                } catch (err) {
+                  toast.error("Failed to add item ❌");
+                }
+              }}
               className="
                 mt-4 w-full
                 bg-yellow-400 hover:bg-yellow-500
